@@ -1,0 +1,39 @@
+version: "3"
+# images from phpstorm, https://github.com/JetBrains/phpstorm-docker-images/blob/master/docker-compose.yml
+services:
+  mysql-db:
+    container_name: mask_mysql-db
+    image: mysql:5.5
+    #command: --default-authentication-plugin=mysql_native_password --skip-grant-tables
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: maskeraad-dev
+      # following will be created on first run
+      MYSQL_DATABASE: mask-laenutus-dev
+      MYSQL_USER: mask-joomla
+      MYSQL_PASSWORD: mask-joomla
+    volumes:
+      - /data/mysql:/var/lib/mysql
+
+  adminer:
+    container_name: mask_adminer
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8010:8080
+    environment:
+      ADMINER_DEFAULT_SERVER: mask_mysql-db
+
+  apache-php56:
+    container_name: mask_apache-php56
+    image: apache-php56-mmod  # phpstorm/php-56-apache-xdebug-25
+    volumes:
+      - /mnt/nfs-maskeraad-dev/dev-laenutus:/var/www/html
+      - /mnt/nfs-maskeraad-dev/apache/conf/apache.crt:/etc/ssl/certs/ssl-cert-snakeoil.pem
+      - /mnt/nfs-maskeraad-dev/apache/conf/apache.key:/etc/ssl/private/ssl-cert-snakeoil.key
+    ports:
+      - 8056:80
+      - 44356:443
+    environment:
+      #change the line below with your IP address
+      XDEBUG_CONFIG: remote_host=10.10.10.171
