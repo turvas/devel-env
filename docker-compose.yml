@@ -37,3 +37,17 @@ services:
     environment:
       #change the line below with your IP address
       XDEBUG_CONFIG: remote_host=10.10.10.171
+
+  apache-php73:
+    container_name: mask_apache-php73
+    image: apache-php73-mmod  # phpstorm/php-56-apache-xdebug-25
+    volumes:
+      - /mnt/nfs-maskeraad-dev/dev-laenutus:/var/www/html
+      - /mnt/nfs-maskeraad-dev/apache/conf/apache.crt:/etc/ssl/certs/ssl-cert-snakeoil.pem
+      - /mnt/nfs-maskeraad-dev/apache/conf/apache.key:/etc/ssl/private/ssl-cert-snakeoil.key
+    ports:
+      - 8073:80
+      - 44373:443
+    environment:
+      #change the line below with your IP address
+      XDEBUG_CONFIG: remote_host=10.10.10.171
